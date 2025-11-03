@@ -32,6 +32,9 @@ SELECT
     bc.booking_count AS total_bookings_per_property,
     RANK() OVER (
         ORDER BY bc.booking_count DESC
-    ) AS ranks
+    ) AS ranks,
+    ROW_NUMBER() OVER (
+        ORDER BY bc.booking_count DESC
+    ) AS row_num
 FROM property p
 INNER JOIN BookingCounts bc ON bc.property_id = p.property_id;
