@@ -11,7 +11,8 @@ SELECT b.booking_id, b.property_id, b.start_date, b.end_date, b.total_price, b.s
 	   u.user_id, u.first_name, u.last_name, u.email, u.role
 FROM booking b
 INNER JOIN users u
-ON u.user_id = b.user_id;
+ON u.user_id = b.user_id
+ORDER BY b.start_date DESC;
 
 -- LEFT JOIN to retrieve all properties and their reviews, including properties that have no reviews.
 SELECT p.property_id, p.host_id, p.name, p.location, p.price_per_night, r.rating, r.comment
