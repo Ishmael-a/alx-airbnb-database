@@ -7,12 +7,14 @@
 -- Description: Sample dataset for Airbnb database
 -- =====================================================
 
-USE airbnb_db;
+-- USE airbnb_db;
+
+-- TRUNCATE TABLE message, review, payment, booking, property, users RESTART IDENTITY CASCADE;
 
 -- =====================================================
 -- USERS
 -- =====================================================
-INSERT INTO User (user_id, first_name, last_name, email, password_hash, phone_number, role)
+INSERT INTO Users (user_id, first_name, last_name, email, password_hash, phone_number, role)
 VALUES
 ('uuid-001', 'Kwesi', 'Abu', 'kwesi.abu@example.com', 'hashed_pw_001', '+233201234567', 'host'),
 ('uuid-002', 'Ama', 'Mensah', 'ama.mensah@example.com', 'hashed_pw_002', '+233502223344', 'guest'),
@@ -32,6 +34,7 @@ VALUES
 -- =====================================================
 -- BOOKINGS
 -- =====================================================
+
 INSERT INTO Booking (booking_id, property_id, user_id, start_date, end_date, total_price, status)
 VALUES
 ('book-001', 'prop-001', 'uuid-002', '2025-11-01', '2025-11-05', 1000.00, 'confirmed'),
@@ -41,6 +44,7 @@ VALUES
 -- =====================================================
 -- PAYMENTS
 -- =====================================================
+
 INSERT INTO Payment (payment_id, booking_id, amount, payment_method)
 VALUES
 ('pay-001', 'book-001', 1000.00, 'credit_card'),

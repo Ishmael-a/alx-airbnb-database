@@ -8,24 +8,24 @@
 -- =====================================================
 
 -- Use a dedicated database
-CREATE DATABASE IF NOT EXISTS airbnb_db;
-USE airbnb_db;
+-- CREATE DATABASE IF NOT EXISTS airbnb_db;
+-- USE airbnb_db;
 
 -- =====================================================
 -- USER TABLE
 -- =====================================================
-CREATE TABLE IF NOT EXISTS User (
+CREATE TABLE IF NOT EXISTS Users (
     user_id CHAR(36) PRIMARY KEY,
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
     phone_number VARCHAR(20),
-    role ENUM('guest', 'host', 'admin') NOT NULL,
+    role VARCHAR(10) NOT NULL CHECK (role IN ('guest', 'host', 'admin')),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE INDEX idx_user_email ON User (email);
+CREATE INDEX idx_user_email ON Users (email);
 
 -- =====================================================
 -- PROPERTY TABLE
@@ -38,8 +38,8 @@ CREATE TABLE IF NOT EXISTS Property (
     location VARCHAR(100) NOT NULL,
     price_per_night DECIMAL(10,2) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    CONSTRAINT fk_property_host FOREIGN KEY (host_id) REFERENCES User(user_id) ON DELETE CASCADE
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_property_host FOREIGN KEY (host_id) REFERENCES Users(user_id) ON DELETE CASCADE
 );
 
 CREATE INDEX idx_property_host ON Property (host_id);
@@ -54,10 +54,10 @@ CREATE TABLE IF NOT EXISTS Booking (
     start_date DATE NOT NULL,
     end_date DATE NOT NULL,
     total_price DECIMAL(10,2) NOT NULL,
-    status ENUM('pending', 'confirmed', 'canceled') NOT NULL,
+    status VARCHAR(10) NOT NULL CHECK (status IN ('pending', 'confirmed', 'canceled')),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_booking_property FOREIGN KEY (property_id) REFERENCES Property(property_id) ON DELETE CASCADE,
-    CONSTRAINT fk_booking_user FOREIGN KEY (user_id) REFERENCES User(user_id) ON DELETE CASCADE
+    CONSTRAINT fk_booking_user FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE
 );
 
 CREATE INDEX idx_booking_property ON Booking (property_id);
@@ -71,7 +71,7 @@ CREATE TABLE IF NOT EXISTS Payment (
     booking_id CHAR(36) NOT NULL,
     amount DECIMAL(10,2) NOT NULL,
     payment_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    payment_method ENUM('credit_card', 'paypal', 'stripe') NOT NULL,
+    payment_method VARCHAR(10) NOT NULL CHECK (payment_method IN ('credit_card', 'paypal', 'stripe')),
     CONSTRAINT fk_payment_booking FOREIGN KEY (booking_id) REFERENCES Booking(booking_id) ON DELETE CASCADE
 );
 
@@ -88,7 +88,7 @@ CREATE TABLE IF NOT EXISTS Review (
     comment TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_review_property FOREIGN KEY (property_id) REFERENCES Property(property_id) ON DELETE CASCADE,
-    CONSTRAINT fk_review_user FOREIGN KEY (user_id) REFERENCES User(user_id) ON DELETE CASCADE
+    CONSTRAINT fk_review_user FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE
 );
 
 CREATE INDEX idx_review_property ON Review (property_id);
@@ -103,8 +103,8 @@ CREATE TABLE IF NOT EXISTS Message (
     recipient_id CHAR(36) NOT NULL,
     message_body TEXT NOT NULL,
     sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT fk_message_sender FOREIGN KEY (sender_id) REFERENCES User(user_id) ON DELETE CASCADE,
-    CONSTRAINT fk_message_recipient FOREIGN KEY (recipient_id) REFERENCES User(user_id) ON DELETE CASCADE
+    CONSTRAINT fk_message_sender FOREIGN KEY (sender_id) REFERENCES Users(user_id) ON DELETE CASCADE,
+    CONSTRAINT fk_message_recipient FOREIGN KEY (recipient_id) REFERENCES Users(user_id) ON DELETE CASCADE
 );
 
 CREATE INDEX idx_message_sender ON Message (sender_id);
@@ -113,3 +113,6 @@ CREATE INDEX idx_message_recipient ON Message (recipient_id);
 -- =====================================================
 -- END OF SCHEMA
 -- =====================================================
+
+
+
